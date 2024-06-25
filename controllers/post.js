@@ -3,7 +3,7 @@ const Post = require('../models/Post');
 exports.read = async (req, res) => {
   try {
     const id = req.params.id;
-    const posted = await Post.findOne({ _id: id }).exec();
+    const posted = await Post.findOne({ _id: id }).populate('comments');
     res.send(posted);
   } catch (err) {
     console.log(err);
@@ -13,8 +13,8 @@ exports.read = async (req, res) => {
 
 exports.list = async (req, res) => {
   try {
-    const posted = await Post.find({}).exec();
-    res.send(posted);
+    const posted = await Post.find({}).populate('comments');
+    res.status(200).json(posted);
   } catch (err) {
     console.log(err);
     res.status(500).send('Server Error');

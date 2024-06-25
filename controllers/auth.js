@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Follow = require('../models/Follow');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { token } = require('morgan');
@@ -20,6 +21,11 @@ exports.register = async (req, res) => {
     });
     user.password = await bcrypt.hash(password, salt);
     await user.save();
+    
+    const objectId = await User.findOne({ username });
+    let follow = new Follow({ userId: objectId, following: [], follower: []});
+    await follow.save();
+
     res.send('Registered :D');
   } catch (err) {
     console.log(err);
@@ -60,3 +66,14 @@ exports.login = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+
+exports.list = async (req, res) => {
+  try{
+    const user = await User.find({});
+    res.status(200).json(user);
+  }
+  catch{
+    console.log(err);
+    res.status(500).send('Server Error');
+  }
+}
