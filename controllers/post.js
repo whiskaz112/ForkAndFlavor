@@ -3,7 +3,15 @@ const Post = require('../models/Post');
 exports.read = async (req, res) => {
   try {
     const id = req.params.id;
-    const posted = await Post.findOne({ _id: id }).exec();
+    const posted = await Post.findOne({ _id: id })
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'userId',
+          select: 'username _id',
+        },
+      })
+      .exec();
     res.send(posted);
   } catch (err) {
     console.log(err);

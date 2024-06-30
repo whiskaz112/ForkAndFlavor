@@ -1,33 +1,49 @@
 const express = require('express');
-
+const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const cors = require('cors');
-const bodyParse = require('body-parser');
-
+const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const { getCurrentUserId } = require('./middleware/getCurrentUserId');
+
+dotenv.config();
 
 const { readdirSync } = require('fs');
-// const productRouters = require('./routes/product')
-// const authRouters = require('./routes/auth')
 
 const app = express();
 
 connectDB();
 
 app.use(morgan('dev'));
-app.use(cors());
-app.use(bodyParse.json({ limit: '10mb' }));
 
-// Route 1
-// app.get('/product', (req, res) => {
-//     res.send('Hello Endpoint 555')
-// })
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
-// Route 2
-// app.use('/api', productRouters)
-// app.use('/api', authRouters)
+async function addHook(req, res, next) {
+  try {
+    const CURRENT_USER_ID = await getCurrentUserId();
+    if (req.cookies.userId !== CURRENT_USER_ID.toString()) {
+      res.clearCookie('userId');
+      res.cookie('userId', CURRENT_USER_ID.toString());
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  next();
+}
 
-// Route 3
-readdirSync('./routes').map(r => app.use('/api', require('./routes/' + r)));
+app.use(addHook);
 
-app.listen(5000, () => console.log('Server is Running 5000'));
+app.use(bodyParser.json());
+
+readdirSync('./routes').map(r => app.use('', require('./routes/' + r)));
+
+app.listen(process.env.PORT, () =>
+  console.log(`Server is running on port ${process.env.PORT}`)
+);
