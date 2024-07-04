@@ -4,11 +4,11 @@ const commentSchema = mongoose.Schema(
   {
     message: {
       type: String,
-      required: true,
     },
     rate: {
       type: Number,
-      min: 1,
+      default: 0,
+      min: 0,
       max: 5,
     },
     userId: [

@@ -72,31 +72,93 @@ exports.updateComment = async (req, res) => {
 
 exports.deleteComment = async (req, res) => {
   try {
-    const comment = await Comment.findById(req.params.commentId).select(
-      'userId parentId'
-    );
+    const { commentId, postId } = req.params;
+
+    const comment = await Comment.findById(commentId).select('userId rate');
+
+    if (!comment) {
+      return res.status(404).send('Comment not found');
+    }
 
     if (comment.userId.toString() !== req.cookies.userId) {
       return res
         .status(401)
-        .send('You do not have permission to delete this message');
+        .send('You do not have permission to delete this comment');
     }
 
     const deleteChildComments = async parentId => {
       const childComments = await Comment.find({ parentId });
-      for (const children of childComments) {
-        await deleteChildComments(children._id);
-        await Comment.findByIdAndDelete(children._id);
+      for (const child of childComments) {
+        await deleteChildComments(child._id);
+        await Comment.findByIdAndDelete(child._id);
+        await Post.findByIdAndUpdate(postId, {
+          $pull: { comments: child._id },
+        });
       }
     };
 
     await deleteChildComments(comment._id);
+    await Comment.findByIdAndDelete(commentId);
 
-    await Comment.findByIdAndDelete(req.params.commentId);
+    const post = await Post.findById(postId);
 
-    res.send({ id: req.params.commentId });
+    post.comments.pull(commentId);
+
+    const remainingComments = await Comment.find({
+      _id: { $in: post.comments },
+    });
+    const totalRatings = remainingComments.length;
+    const totalRatingSum = remainingComments.reduce(
+      (sum, cmt) => sum + cmt.rate,
+      0
+    );
+    const averageRating =
+      totalRatings === 0 ? 0 : totalRatingSum / totalRatings;
+
+    post.totalRatings = totalRatings;
+    post.averageRating = averageRating;
+
+    await post.save();
+
+    res.send({ id: commentId });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
   }
 };
+// exports.deleteComment = async (req, res) => {
+//   try {
+//     const comment = await Comment.findById(req.params.commentId).select(
+//       'userId parentId'
+//     );
+
+//     if (comment.userId.toString() !== req.cookies.userId) {
+//       return res
+//         .status(401)
+//         .send('You do not have permission to delete this message');
+//     }
+
+//     const deleteChildComments = async parentId => {
+//       const childComments = await Comment.find({ parentId });
+//       for (const child of childComments) {
+//         await deleteChildComments(child._id);
+//         await Comment.findByIdAndDelete(child._id);
+//         await Post.findByIdAndUpdate(req.params.postId, {
+//           $pull: { comments: child._id },
+//         });
+//       }
+//     };
+
+//     await deleteChildComments(comment._id);
+//     await Comment.findByIdAndDelete(req.params.commentId);
+
+//     await Post.findByIdAndUpdate(req.params.postId, {
+//       $pull: { comments: req.params.commentId },
+//     });
+
+//     res.send({ id: req.params.commentId });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Server error');
+//   }
+// };
