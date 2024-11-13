@@ -5,7 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
-const { getCurrentUserId } = require('./middleware/getCurrentUserId');
+const { getCurrentUserId } = require('./services/userService');
 
 dotenv.config();
 
@@ -23,22 +23,7 @@ app.use(
     credentials: true,
   })
 );
-app.use(cookieParser(process.env.COOKIE_SECRET));
-
-async function addHook(req, res, next) {
-  try {
-    const CURRENT_USER_ID = await getCurrentUserId();
-    if (req.cookies.userId !== CURRENT_USER_ID.toString()) {
-      res.clearCookie('userId');
-      res.cookie('userId', CURRENT_USER_ID.toString());
-    }
-  } catch (error) {
-    console.error(error);
-  }
-  next();
-}
-
-app.use(addHook);
+app.use(cookieParser());
 
 app.use(bodyParser.json());
 

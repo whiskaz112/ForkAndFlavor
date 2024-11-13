@@ -16,7 +16,6 @@ const likeSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-// Create the Comment model
 const Like = mongoose.model('Like', likeSchema);
 
 module.exports = Comment;
