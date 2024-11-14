@@ -3,7 +3,10 @@ const Follow = require('../models/Follow');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { token } = require('morgan');
+const multer = require('multer');
 const UserPostInteraction = require('../models/UserPostInteraction');
+
+let secret = 'jwtsecret';
 
 exports.register = async (req, res) => {
     try {
@@ -11,7 +14,7 @@ exports.register = async (req, res) => {
 
         let user = await User.findOne({ username });
         if (user) {
-            return res.send('This username is already used.').status(400);
+            return res.status(400).send('This username is already used.');
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -29,7 +32,7 @@ exports.register = async (req, res) => {
         let userInteraction = new UserPostInteraction({ userId: objectId, myPost: [], bookmarkPost: [] });
         await userInteraction.save()
 
-        res.send('Registered :D');
+        res.status(200).json({ success: true, message: 'Registered :D' });
     } catch (err) {
         console.log(err);
         res.status(500).send('Server Error');
@@ -40,8 +43,8 @@ exports.login = async (req, res) => {
     try {
         //code
         // 1. Check User
-        const { username, password } = req.body;
-        let user = await User.findOneAndUpdate({ username }, { new: true });
+        const { email, password } = req.body;
+        let user = await User.findOneAndUpdate({ email }, { new: true });
         console.log(user);
         if (user) {
             const isMatch = await bcrypt.compare(password, user.password);
@@ -53,13 +56,21 @@ exports.login = async (req, res) => {
             let payload = {
                 user: {
                     username: user.username,
+                    email: user.email
                 },
             };
             // 3. Generate
-            jwt.sign(payload, 'jwtsecret', { expiresIn: 3600 }, (err, token) => {
-                if (err) throw err;
-                res.json({ token, payload });
+            const token = jwt.sign(payload, secret, { expiresIn: 3600 });
+            if (!token) {
+                throw {message: 'token error'};
+            };
+            res.cookie('token', token, {
+                maxAge: 300000,
+                secure: true,
+                httpOnly: true,
+                sameSite: "none",
             });
+            res.json({ payload , success: true});
         } else {
             return res.status(400).send('User not found!');
         }
@@ -70,13 +81,28 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.list = async (req, res) => {
+exports.getUser = async (req, res) => {
     try {
-        const user = await User.find({});
-        res.status(200).json(user);
+        console.log('start using token');
+        const authToken = req.cookies.token;
+        console.log('token', authToken)
+        const verifyUser = jwt.verify(authToken, secret);
+        const checkUser = await User.findOne({ email: verifyUser.user.email });
+        if (!checkUser) {
+            throw { message: 'user not found' };
+        }
+        console.log('this checkUser: ', checkUser)
+        res.status(200).json(checkUser);
     }
-    catch {
+    catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).json({
+            message: 'Server Error',
+            err
+        });
     }
-}
+};
+
+exports.uploadPic = async (req, res) => {
+    res.json(req.file)
+};

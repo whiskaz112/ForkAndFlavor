@@ -87,7 +87,7 @@ exports.followList = async (req, res) => {
         if (!userFollowData) {
             return res.status(404).send('User not found');
         }
-        res.status(202).json(userFollowData);
+        res.status(200).json(userFollowData);
     } catch (err) {
         console.log(err);
         res.status(500).send('Server Error');

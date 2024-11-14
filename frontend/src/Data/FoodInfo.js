@@ -2,7 +2,7 @@ const foodInfo = [
     {
         key: 1,
         name: "ต้มยำปูม้า",
-        img: "https://s3-alpha-sig.figma.com/img/fe1e/f1cc/927d6161b672bcfecb0c04f3c635e445?Expires=1719187200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=UvzWB83jTakoVPVM~IB45Q0StQNqn6o~9pPzvsW7KA8rDL9X4mkAp-MpxWIS2HQefK-S2mtDNlymGTfOMoSJtCbGmsSWhSXtagsQN4KxtfP7fBDufo2QqmD7XbYJpHAYCyKGmsmqI5kxWkClApOKyuUnvrjiYkNO9cQJYbKevOjMsDkCUmIsuR~sqPLs6XQASd7Ckoc7RvU~2WzDF6GrtoVURfjJXZbylqn4Q0-xyF3aTNlwtZIKygphlAWGWydgnPPJOqXr0t6iBH2d-DpW~dnCFh37B04HLeIo0cE7kl~McQMneEvI4woQDTKQbWfQE9qOjkUxNcpNE5kaTjj5Yw__",
+        img: "./../../public/Image/Foods/2bb13395b02d39a173231fe5c51c10c0.jpg",
         filter1: "Thai",
         filter2: "Spicy",
         rate: "4",
@@ -114,7 +114,7 @@ const foodInfo = [
     {
         key: 9,
         name: "ต้มยำปูม้า",
-        img: "https://s3-alpha-sig.figma.com/img/fe1e/f1cc/927d6161b672bcfecb0c04f3c635e445?Expires=1719187200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=UvzWB83jTakoVPVM~IB45Q0StQNqn6o~9pPzvsW7KA8rDL9X4mkAp-MpxWIS2HQefK-S2mtDNlymGTfOMoSJtCbGmsSWhSXtagsQN4KxtfP7fBDufo2QqmD7XbYJpHAYCyKGmsmqI5kxWkClApOKyuUnvrjiYkNO9cQJYbKevOjMsDkCUmIsuR~sqPLs6XQASd7Ckoc7RvU~2WzDF6GrtoVURfjJXZbylqn4Q0-xyF3aTNlwtZIKygphlAWGWydgnPPJOqXr0t6iBH2d-DpW~dnCFh37B04HLeIo0cE7kl~McQMneEvI4woQDTKQbWfQE9qOjkUxNcpNE5kaTjj5Yw__",
+        img: "./../../public/Image/Foods/2bb13395b02d39a173231fe5c51c10c0.jpg",
         filter1: "Thai",
         filter2: "Spicy",
         rate: "4",

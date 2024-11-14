@@ -9,9 +9,10 @@ import {createRecommendPost} from "../Components/RecommendPost";
 import { Link } from "react-router-dom";
 import { useUserAuth } from '../context/UserAuthContext';
 
-function Home({isLogin}){
+function Home(){
 
     const {user} = useUserAuth();
+    // console.log(user)
 
     return(
         <div>

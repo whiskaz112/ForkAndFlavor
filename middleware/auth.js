@@ -1,14 +1,13 @@
 const jwt = require('jsonwebtoken');
 
 exports.auth = async (req, res, next) => {
+  const token = req.cookies.token;
   try {
-    const token = req.headers['authtoken'];
     if (!token) {
       return res.status(401).send('No Token');
     }
-    const decoded = jwt.verify(token, 'jwtsecret');
-    req.user = decoded.user;
-
+    const user = jwt.verify(token, 'jwtsecret');
+    req.user = user;
     next();
   } catch (err) {
     console.log(err);

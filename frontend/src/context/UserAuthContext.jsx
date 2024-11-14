@@ -6,6 +6,7 @@ import {
     signOut
 } from "firebase/auth"
 import { auth } from "../assets/firebase";
+// import { register } from "../../../controllers/auth";
 
 const userAuthContext = createContext();
 
@@ -18,7 +19,7 @@ export function UserAuthContextProvider({children}) {
     }
 
     function signUp(email, password){
-        return createUserWithEmailAndPassword(auth, email, password);
+        return register(auth, email, password);
     }
 
     function logOut(){
