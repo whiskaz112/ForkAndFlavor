@@ -6,10 +6,11 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const { readdirSync } = require('fs');
-const cookies = require('cookie-parser');
+const dotenv = require('dotenv');
+const { getCurrentUserId } = require('./services/userService');
 
-// const productRouters = require('./routes/product')
-// const authRouters = require('./routes/auth')
+dotenv.config();
+
 const authRouters = require('./routes/auth');
 
 connectDB();
@@ -19,19 +20,16 @@ app.use(express.static('public'));
 app.use(morgan('dev'));
 app.use(cors({
     credentials:true,
-    origin: ['http://localhost:5173']
+    origin: process.env.CLIENT_URL
+    // origin: ['http://localhost:5173']
 }));
-app.use(cookies());
 app.use(cookieParser());
-// app.use(cors({
-//     credentials: true,
-//     origin: ['http://localhost:5173']
-// }));
-app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.json());
 
 app.use('/api', authRouters);
 
-// Route 3
-readdirSync('./routes').map(r => app.use('/api', require('./routes/' + r)));
+readdirSync('./routes').map(r => app.use('', require('./routes/' + r)));
 
-app.listen(5000, () => console.log('Server is Running 5000'));
+app.listen(process.env.PORT, () =>
+  console.log(`Server is running on port ${process.env.PORT}`)
+);
