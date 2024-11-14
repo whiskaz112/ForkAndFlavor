@@ -130,4 +130,4 @@ exports.uploadPic = async (req, res) => {
     //         err
     //     })
     // }
-};
+};  

@@ -4,7 +4,15 @@ const UserPostInteraction = require('../models/UserPostInteraction');
 exports.read = async (req, res) => {
 	try {
 		const id = req.params.id;
-		const posted = await Post.findOne({ _id: id }).populate('comments');
+		const posted = await Post.findOne({ _id: id })
+			.populate({
+				path: 'comments',
+				populate: {
+					path: 'userId',
+					select: 'username _id',
+				},
+			})
+			.exec();
 		res.send(posted);
 	} catch (err) {
 		console.log(err);
