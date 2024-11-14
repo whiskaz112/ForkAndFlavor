@@ -7,7 +7,7 @@ const { read, list, create, update, remove } = require('../controllers/post');
 
 router.get('/post', list);
 router.get('/post/:id', read);
-router.post('/post', create);
+router.post('/post/:id', create);
 router.put('/post/:id', update);
 router.delete('/post/:id', remove);
 
