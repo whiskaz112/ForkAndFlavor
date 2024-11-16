@@ -20,8 +20,8 @@ app.use(express.static('public'));
 app.use(morgan('dev'));
 app.use(cors({
     credentials:true,
-    origin: process.env.CLIENT_URL
-    // origin: ['http://localhost:5173']
+    // origin: process.env.CLIENT_URL
+    origin: ['http://localhost:5173']
 }));
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -30,6 +30,6 @@ app.use('/api', authRouters);
 
 readdirSync('./routes').map(r => app.use('', require('./routes/' + r)));
 
-app.listen(process.env.PORT, () =>
-  console.log(`Server is running on port ${process.env.PORT}`)
+app.listen(5000, () =>
+  console.log(`Server is running on port ${5000}`)
 );

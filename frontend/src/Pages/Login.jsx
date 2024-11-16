@@ -42,7 +42,7 @@ function Login() {
       if (response.data.success) {
         console.log('Login Success!');
         // Handle successful registration (e.g., navigate to login page)
-        // navigate("/");
+        navigate("/");
       } else {
         // Handle errors returned from the backend
         setError(response.data.message);
