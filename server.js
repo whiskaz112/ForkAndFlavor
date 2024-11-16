@@ -1,33 +1,35 @@
 const express = require('express');
-
+const app = express();
 const morgan = require('morgan');
 const cors = require('cors');
-const bodyParse = require('body-parser');
-
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
-
 const { readdirSync } = require('fs');
-// const productRouters = require('./routes/product')
-// const authRouters = require('./routes/auth')
+const dotenv = require('dotenv');
+const { getCurrentUserId } = require('./services/userService');
 
-const app = express();
+dotenv.config();
+
+const authRouters = require('./routes/auth');
 
 connectDB();
 
+app.use(express.json());
+app.use(express.static('public'));
 app.use(morgan('dev'));
-app.use(cors());
-app.use(bodyParse.json({ limit: '10mb' }));
+app.use(cors({
+    credentials:true,
+    // origin: process.env.CLIENT_URL
+    origin: ['http://localhost:5173']
+}));
+app.use(cookieParser());
+app.use(bodyParser.json());
 
-// Route 1
-// app.get('/product', (req, res) => {
-//     res.send('Hello Endpoint 555')
-// })
+app.use('/api', authRouters);
 
-// Route 2
-// app.use('/api', productRouters)
-// app.use('/api', authRouters)
+readdirSync('./routes').map(r => app.use('', require('./routes/' + r)));
 
-// Route 3
-readdirSync('./routes').map(r => app.use('/api', require('./routes/' + r)));
-
-app.listen(5000, () => console.log('Server is Running 5000'));
+app.listen(5000, () =>
+  console.log(`Server is running on port ${5000}`)
+);
