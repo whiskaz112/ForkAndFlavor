@@ -109,25 +109,25 @@ exports.createPost = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const updated = await Post.findOneAndUpdate({ _id: id }, req.body, {
-      new: true,
-    }).exec();
-    res.send(updated);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send('Server Error');
-  }
+	try {
+		const id = req.params.id;
+		const updated = await Post.findOneAndUpdate({ _id: id }, req.body, {
+			new: true,
+		}).exec();
+		res.send(updated);
+	} catch (err) {
+		console.log(err);
+		res.status(500).send('Server Error');
+	}
 };
 
 exports.remove = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const removed = await Post.findOneAndDelete({ _id: id }).exec();
-    res.send(removed);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send('Server Error');
-  }
+	try {
+		const id = req.params.id;
+		const removed = await Post.findOneAndDelete({ _id: id }).exec();
+		res.send(removed);
+	} catch (err) {
+		console.log(err);
+		res.status(500).send('Server Error');
+	}
 };
