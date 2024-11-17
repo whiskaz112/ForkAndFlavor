@@ -1,4 +1,5 @@
 const Post = require('../models/Post');
+const postService = require('../services/postService');
 
 exports.read = async (req, res) => {
   try {
@@ -19,23 +20,91 @@ exports.read = async (req, res) => {
   }
 };
 
-exports.list = async (req, res) => {
+exports.getAllPosts = async (req, res) => {
   try {
-    const posted = await Post.find({}).exec();
-    res.send(posted);
+    const posts = await Post.find({})
+      .populate({
+        path: 'details',
+        populate: {
+          path: 'images',
+          model: 'Image',
+        },
+      })
+      .populate('comments')
+      .exec();
+
+    res.status(200).json(posts);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).send('Server Error');
   }
 };
 
-exports.create = async (req, res) => {
+exports.createPost = async (req, res) => {
   try {
-    const posted = await Post(req.body).save();
-    res.send(posted);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send('Server Error');
+    const userId = req.user.id;
+    const { name, ingredient, gastronomy, category, details } = req.body;
+    console.log(userId);
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ message: 'Image is required' });
+    }
+
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    // console.log('Raw details:', details);
+
+    let parsedDetails;
+    try {
+      parsedDetails =
+        typeof details === 'string' ? JSON.parse(details) : details;
+    } catch (error) {
+      return res.status(400).json({ message: 'Invalid details format' });
+    }
+
+    if (!Array.isArray(parsedDetails)) {
+      return res.status(400).json({ message: 'Details must be an array' });
+    }
+
+    // console.log('Parsed details:', parsedDetails);
+
+    const updatedDetails = parsedDetails.map(detail => {
+      if (detail.type === 'image') {
+        return {
+          ...detail,
+          images: {
+            filePath: file.path,
+            mimeType: file.mimetype,
+            size: file.size,
+          },
+        };
+      }
+      return detail;
+    });
+
+    const postData = {
+      name,
+      ingredient,
+      gastronomy,
+      category,
+      userId,
+      details: updatedDetails,
+    };
+
+    const newPost = await postService.createPost(postData);
+
+    res.status(201).json({
+      message: 'Post created successfully',
+      post: newPost,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Failed to create post',
+      error: error.message,
+    });
   }
 };
 
