@@ -11,6 +11,14 @@ import SlideshowCard from './SlideshowCard';
 import foodInfo from '../Data/FoodInfo';
 
 function createSwiperSlide(foodInfo){
+    // const [foods, setFoods] = useState([]);
+
+    // useEffect(() => {
+    //     // Fetch data from backend
+    //     axios.get("http://localhost:5000/api/")
+    //         .then(response => setFoods(response.data))
+    //         .catch(error => console.error("Error fetching food data:", error));
+    // }, []);
     return (
         <SwiperSlide>
             <SlideshowCard

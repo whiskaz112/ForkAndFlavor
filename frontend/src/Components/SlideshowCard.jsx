@@ -1,10 +1,14 @@
 import React from "react";
 import FilterBadge from "./FilterBadge";
 import StarRate from "./StarRate";
+import { Link, useNavigate } from 'react-router-dom';
 
 function SlideshowCard(props) {
+
+    const navigate = useNavigate(); //Fooddetail/${props.id}
+
     return (  
-        <div className="Card">
+        <div className="Card" onClick={() => navigate('/Fooddetail')}> 
             <div className="Card__info">
                 <h1 className="noto-sans-thai-looped-bold">{props.name}</h1>
                 <div className="Card__container noto-sans-thai-looped-semibold">

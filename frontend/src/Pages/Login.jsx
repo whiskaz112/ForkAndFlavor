@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import FormInput from '../Components/FormInput';
 import BtnBack from '../Components/BtnBack';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUserAuth } from '../context/UserAuthContext';
 import axios from 'axios';
+import { loginSuccess } from '../auth/authSlice';
+import { useDispatch } from 'react-redux';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { logIn } = useUserAuth();
-
+  // const { logIn } = useUserAuth();
+  const dispatch = useDispatch();
   let navigate = useNavigate();
 
   // const handleSubmit = async (e) => {
@@ -41,11 +42,11 @@ function Login() {
       );
       if (response.data.success) {
         console.log('Login Success!');
-        // Handle successful registration (e.g., navigate to login page)
+        dispatch(loginSuccess());
         navigate("/");
       } else {
-        // Handle errors returned from the backend
         setError(response.data.message);
+        console.log(error);
       }
       console.log('response: ', response);
     } catch (err) {

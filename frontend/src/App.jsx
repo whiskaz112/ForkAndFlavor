@@ -13,10 +13,13 @@ import Home from './Pages/Home';
 import MyProfile from './Pages/MyProfile';
 import EditProfile from './Pages/EditProfile';
 import Createpost from './Pages/Createpost';
+import FoodDetail from './Pages/Fooddetail';
+import ScrollToTop from './Components/ScrollToTop';
 
 function App() {
     return (
             <Router>
+                <ScrollToTop/>
                 <Routes>
                     <Route exact path="/" element={<Home/>} />
                     <Route path="/login" element={<Login/>} />
@@ -24,6 +27,7 @@ function App() {
                     <Route path="/myprofile" element={<ProtectedRoute><MyProfile/></ProtectedRoute>} />
                     <Route path="/editprofile" element={<ProtectedRoute><EditProfile/></ProtectedRoute>} />
                     <Route path="/createpost" element={<ProtectedRoute><Createpost/></ProtectedRoute>} />
+                    <Route path="/fooddetail" element={<ProtectedRoute><FoodDetail/></ProtectedRoute>} />
                 </Routes>
             </Router>
     )

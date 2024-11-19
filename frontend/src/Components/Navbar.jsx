@@ -3,26 +3,41 @@ import Searchbar from "./Searchbar";
 import BtnLetter from "./BtnLetter";
 import BtnBox from "./BtnBox";
 import { Link, useNavigate } from 'react-router-dom';
-import { useUserAuth } from '../context/UserAuthContext';
-
+import axios from 'axios';
+import { logout } from '../auth/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
 function Navbar() {
 
-    const {logOut, user} = useUserAuth();
-
+    const user = useSelector((state) => state.auth.isAuthenticated);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const navigateToProfile = (view) => {
         navigate('/MyProfile', { state: { view } });
     };
 
-    const handleLogout = async () => {
-        try{
-            await logOut();
-            navigate("/")
-        }catch(err){
-            console.log(err.message)
+    const handleLogout = async (e) => {
+        // e.preventDefault();
+        try {
+            const response = await axios.get(
+                'http://localhost:5000/api/logout'
+                , 
+                {
+                    withCredentials: true, 
+                }
+            );
+
+            if (response.status === 200) {
+                console.log('Logout successful');
+                dispatch(logout()); 
+            } else {
+                console.log('Logout failed:', response.data.message);
+            }
+            console.log('response: ', response);
+        } catch (err) {
+            console.error('Error during logout:', err.message);
         }
-    }
+    };
 
     return (
         <div className="Navbar">
@@ -46,8 +61,8 @@ function Navbar() {
                     </div>
                     :
                     <div className="Navbar__route">
-                        <Link to="/login"><BtnLetter name="Log in"/></Link>
-                        <Link to="/register"><BtnBox name="Sign up"/></Link>
+                        <Link to="/login"><BtnLetter name="Log in" /></Link>
+                        <Link to="/register"><BtnBox name="Sign up" /></Link>
                     </div>
             }
         </div>

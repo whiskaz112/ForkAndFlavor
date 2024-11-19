@@ -1,8 +1,9 @@
+import { Link } from "react-router-dom";
 
 function FreeSlidesCard(props) {
     return ( 
         <div className="FreeSlidesCard">
-            <a href="/">
+            <Link to="/Fooddetail">
             <div className="FreeSlidesCard__info noto-sans-thai-looped-bold">
                 <h1>{props.header}</h1>
                 <p className="noto-sans-thai-looped-thin">{props.preface}</p>
@@ -12,7 +13,7 @@ function FreeSlidesCard(props) {
             </div>
             </div>
             <img id="PostBg" src={props.img} alt={props.header}/>
-            </a>
+            </Link>
         </div>
     );
 }

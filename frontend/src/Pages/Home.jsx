@@ -7,12 +7,11 @@ import FreeSlides, { createFreeSlides } from "../Components/FreeSlides";
 import foodInfo from "../Data/FoodInfo";
 import {createRecommendPost} from "../Components/RecommendPost";
 import { Link } from "react-router-dom";
-import { useUserAuth } from '../context/UserAuthContext';
+import { useSelector } from 'react-redux';
 
 function Home(){
 
-    const {user} = useUserAuth();
-    // console.log(user)
+    const user = useSelector((state) => state.auth.isAuthenticated);
 
     return(
         <div>
