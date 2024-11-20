@@ -196,10 +196,11 @@ function Createpost() {
                                     </div>
                                     {/* <button type="button"><img src="./../../public/Image/Icon/trashcan.svg" alt="Trashcan Icon" /></button> */}
                                 </div>
-                                <ul>
+                                <ul className='ingredient-list-createpost fredoka'>
                                     {formData.ingredients.map((ingredient, index) => (
-                                        <li key={index}>
-                                            {ingredient.name}: {ingredient.quantity}
+                                        <li  key={index}>
+                                            <span>{ingredient.name}</span> 
+                                            <span>{ingredient.quantity}</span>
                                         </li>
                                     ))}
                                 </ul>
