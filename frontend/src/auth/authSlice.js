@@ -1,14 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const checkAuthCookie = async () => {
+export const checkAuthCookie = () => async (dispatch) => {
     try {
         const response = await axios.get('http://localhost:5000/api/checkAuth', { withCredentials: true });
-        console.log("Authenticated: ", response.data.authenticated);
-        return response.data.authenticated;
+        const isAuthenticated = response.data.authenticated;
+        if (isAuthenticated) {
+            dispatch(authSlice.actions.loginSuccess());
+        } else {
+            dispatch(authSlice.actions.logout());
+        }
     } catch (error) {
         console.error('Error checking authentication:', error);
-        return false;
+        dispatch(authSlice.actions.logout());
     }
 };
 

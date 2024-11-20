@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react';
 import '../public/style/App.css'
 import {
     BrowserRouter as Router,
@@ -15,8 +15,16 @@ import EditProfile from './Pages/EditProfile';
 import Createpost from './Pages/Createpost';
 import FoodDetail from './Pages/Fooddetail';
 import ScrollToTop from './Components/ScrollToTop';
+import { useDispatch } from 'react-redux';
+import { checkAuthCookie } from './auth/authSlice';
+import { MessageProvider } from './Components/MessageContext';
 
 function App() {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(checkAuthCookie());
+    }, [dispatch]);
     return (
             <Router>
                 <ScrollToTop/>
@@ -26,7 +34,7 @@ function App() {
                     <Route path="/register" element={<Register/>} />
                     <Route path="/myprofile" element={<ProtectedRoute><MyProfile/></ProtectedRoute>} />
                     <Route path="/editprofile" element={<ProtectedRoute><EditProfile/></ProtectedRoute>} />
-                    <Route path="/createpost" element={<ProtectedRoute><Createpost/></ProtectedRoute>} />
+                    <Route path="/createpost" element={<ProtectedRoute><MessageProvider><Createpost/></MessageProvider></ProtectedRoute>} />
                     <Route path="/fooddetail" element={<ProtectedRoute><FoodDetail/></ProtectedRoute>} />
                 </Routes>
             </Router>

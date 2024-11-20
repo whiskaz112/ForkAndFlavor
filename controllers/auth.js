@@ -90,7 +90,7 @@ exports.uploadPic = async (req, res) => {
   //     })
   // }
 };
-exports.checkAuth = (req, res) => {
+exports.checkAuth = async (req, res) => {
   const token = req.cookies.token;
   if (token) {
       res.json({ authenticated: true });
