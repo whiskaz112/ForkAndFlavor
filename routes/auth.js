@@ -18,9 +18,9 @@ const { register, login, logout, getUser, uploadPic } = require('../controllers/
 
 router.post('/register', register);
 router.post('/login', login);
-router.get('/getUser', getUser);
-router.post('/uploadPic', upload.single('myFile'), uploadPic);
 router.get('/logout', logout);
+// router.get('/getUser', getUser);
+// router.post('/uploadPic', upload.single('myFile'), uploadPic);
 
 router.get('/user', authenticate, authorize(['user', 'admin']), (req, res) => {
   res.json({ message: 'Welcome User' });

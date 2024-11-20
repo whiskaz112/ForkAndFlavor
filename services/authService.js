@@ -24,7 +24,6 @@ exports.registerUser = async (username, email, password) => {
 
 exports.loginUser = async (email, password) => {
   const user = await User.findOne({ email });
-  // console.log(user);
   if (!user) throw new Error('Invalid email'); // user doesn't existed
 
   const isMatch = await bcrypt.compare(password, user.password);

@@ -36,18 +36,19 @@ const userSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    profile: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Image',
+        default: null,
+      },
+    ],
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Like',
       },
     ],
-    profilePic: {
-      type: Buffer
-    },
-    profilePicType: {
-      type: String, // To store the MIME type of the image (optional)
-    }
   },
   { timestamps: true }
 );
