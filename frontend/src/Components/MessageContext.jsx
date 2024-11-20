@@ -21,10 +21,10 @@ const handleSubmit = (e, type) => {
     setInput('');
     setID(id + 1);
 
-    console.log(input);
-    console.log(messages);
-    console.log(type);
-    console.log(id)
+    // console.log(input);
+    // console.log(messages);
+    // console.log(type);
+    // console.log(id);
     };
 
 return (

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import BtnBox from "../Components/BtnBox";
@@ -8,17 +8,65 @@ import MessageContext from "../Components/MessageContext";
 import { DndContext, closestCorners } from "@dnd-kit/core";
 import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import SortableItem from '../Components/SortableItem';
-
+import axios from 'axios'
 
 function Createpost() {
+    const [formData, setFormData] = useState({
+        name: '',
+        tags: ['', ''],
+        cookTime: '',
+        yieldValue: '',
+        description: '',
+        ingredients: [],
+        instructions: [],
+    })
+
+    const [currentIngredient, setCurrentIngredient] = useState({ name: '', quantity: '' });
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    }
+
+    const handleIngredientChange = (field) => (e) => {
+        const value = e.target.value; // Access the value from the event
+        setCurrentIngredient({
+            ...currentIngredient,
+            [field]: value, // Dynamically update the field based on the input name
+        });
+    };
+
+
+    const handleInstructionChange = (index, value) => {
+        const updatedInstructions = [...formData.instructions];
+        updatedInstructions[index] = value;
+        setFormData({ ...formData, instructions: updatedInstructions });
+    };
+
+    const addIngredient = (e) => {
+        e.preventDefault();
+
+        // Create a new ingredient object
+        const newIngredient = { ...currentIngredient };
+
+        // Add it to the ingredients array
+        setFormData({
+            ...formData,
+            ingredients: [...formData.ingredients, newIngredient],
+        });
+
+        // Reset the current ingredient fields
+        setCurrentIngredient({ name: '', quantity: '' });
+    };
+
     const { input, setInput, handleSubmit, messages, setMessages } = useContext(MessageContext);
 
     const getMessagePos = id => messages.findIndex(mes => mes.id === id)
 
     const handleDragEnd = event => {
-        const {active, over} = event
+        const { active, over } = event
 
-        if(active.id === over.id) return;
+        if (active.id === over.id) return;
 
         setMessages(messages => {
             const originalPos = getMessagePos(active.id)
@@ -28,10 +76,23 @@ function Createpost() {
         })
     }
 
-    const handleFormSubmit = e => {
+    const handleFormSubmit = async (e) => {
+        console.log(formData)
         e.preventDefault();
-        handleSubmit(e);
+
+        // try {
+        //     const response = await axios.post('http://localhost:5000/api/post', formData, {
+        //         withCredentials: true,
+        //     });
+
+        //     console.log('Post created:', response.data);
+        //     alert('Post created successfully!');
+        // } catch (error) {
+        //     console.error('Error creating post:', error);
+        //     alert('Failed to create post');
+        // }
     };
+
     return (
         <div className="Createpost">
             <header>
@@ -51,18 +112,65 @@ function Createpost() {
                                 <input type="file" id="file-input" accept="image/*" />
                             </div>
                             <div className="createpost-input-info noto-sans-thai-looped-bold">
-                                <input type="text" className="fredoka" placeholder="Name..." />
-                                <input type="text" className="noto-sans-thai-looped-bold" placeholder="+ add tags" />
-                                <input type="text" className="noto-sans-thai-looped-bold" placeholder="+ add tags" />
+                                <input
+                                    type="text"
+                                    name='name'
+                                    className="fredoka"
+                                    placeholder="Name..."
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                />
+                                <input
+                                    type="text"
+                                    name='text1'
+                                    className="noto-sans-thai-looped-bold"
+                                    placeholder="+ add tags"
+                                    value={formData.tags[0]}
+                                    onChange={(e) => {
+                                        const newTags = [...formData.tags]; // Create a copy of the current array
+                                        newTags[0] = e.target.value;       // Update only the specific index
+                                        setFormData({ ...formData, tags: newTags });
+                                    }}
+                                />
+                                <input
+                                    type="text"
+                                    name='text2'
+                                    className="noto-sans-thai-looped-bold"
+                                    placeholder="+ add tags"
+                                    value={formData.tags[1]}
+                                    onChange={(e) => {
+                                        const newTags = [...formData.tags]; // Create a copy of the current array
+                                        newTags[1] = e.target.value;       // Update only the specific index
+                                        setFormData({ ...formData, tags: newTags });
+                                    }}
+                                />
                                 <div>
                                     <label htmlFor="cook-time"><img src="./../../public/Image/Icon/FaRegClockB.svg" alt="Clock Icon" />&nbsp; Cook Time:</label>
-                                    <input type="text" id="cook-time" />
+                                    <input
+                                        type="text"
+                                        name="cookTime"
+                                        id="cook-time"
+                                        value={formData.cookTime}
+                                        onChange={handleInputChange}
+                                    />
                                 </div>
                                 <div>
                                     <label htmlFor="yield"><img src="./../../public/Image/Icon/usersB.svg" alt="Users Icon" />&nbsp; Yield:</label>
-                                    <input type="text" id="yield" />
+                                    <input
+                                        type="text"
+                                        name='yieldValue'
+                                        id="yield"
+                                        value={formData.yieldValue}
+                                        onChange={handleInputChange}
+                                    />
                                 </div>
-                                <input type="text" className="noto-sans-thai-looped-bold" placeholder="description..." />
+                                <input
+                                    type="text"
+                                    className="noto-sans-thai-looped-bold"
+                                    placeholder="description..."
+                                    value={formData.description}
+                                    onChange={handleInputChange}
+                                />
                             </div>
                         </div>
                         <div className="createpost-second-part">
@@ -70,15 +178,32 @@ function Createpost() {
                                 <div className="ingredient-box-input fredoka">
                                     <div>
                                         <label htmlFor="ingredients">Ingredients</label>
-                                        <input type="text" id="ingredients" />
+                                        <input
+                                            type="text"
+                                            id="ingredients"
+                                            value={currentIngredient.name}
+                                            onChange={handleIngredientChange('name')}
+                                        />
                                     </div>
                                     <div>
-                                        <label htmlFor="quantity">quantity</label>
-                                        <input type="text" id="quantity" />
+                                        <label htmlFor="quantity">Quantity</label>
+                                        <input
+                                            type="text"
+                                            id="quantity"
+                                            value={currentIngredient.quantity}
+                                            onChange={handleIngredientChange('quantity')}
+                                        />
                                     </div>
-                                    <button type="button"><img src="./../../public/Image/Icon/trashcan.svg" alt="Trashcan Icon" /></button>
+                                    {/* <button type="button"><img src="./../../public/Image/Icon/trashcan.svg" alt="Trashcan Icon" /></button> */}
                                 </div>
-                                <BtnLetter name="+ ingredient" />
+                                <ul>
+                                    {formData.ingredients.map((ingredient, index) => (
+                                        <li key={index}>
+                                            {ingredient.name}: {ingredient.quantity}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <BtnLetter name="+ ingredient" type="button" onClick={addIngredient} />
                                 <img className="end-box-input" src="./../../public/Image/Icon/end-box-ingredient.svg" alt="End Box Icon" />
                             </div>
                             <div className="instruction-box-input fredoka">
@@ -107,7 +232,7 @@ function Createpost() {
                         </DndContext>
                         <div className='btn-group-createpost'>
                             <BtnBox name="Cancel" />
-                            <BtnBox name="Post" />
+                            <BtnBox name="Post" type="submit" onClick={handleFormSubmit} />
                         </div>
                     </form>
                 </div>
