@@ -5,6 +5,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
+const dotenv = require('dotenv');
+const { readdirSync } = require('fs');
 
 dotenv.config();
 
@@ -15,15 +17,17 @@ connectDB();
 app.use(express.json());
 app.use(express.static('public'));
 app.use(morgan('dev'));
-app.use(cors({
-    credentials:true,
-    origin: process.env.CLIENT_URL
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL,
     // origin: ['http://localhost:5173']
-}));
+  })
+);
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-app.use('/api', authRouters);
+app.use('', authRouters);
 
 readdirSync('./routes').map(r => app.use('', require('./routes/' + r)));
 

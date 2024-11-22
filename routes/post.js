@@ -7,8 +7,8 @@ const {
   read,
   getAllPosts,
   createPost,
-  update,
-  remove,
+  updatePost,
+  deletePost,
 } = require('../controllers/post');
 
 router.get('/posts', getAllPosts);
@@ -17,10 +17,22 @@ router.post(
   '/post',
   authenticate,
   authorize(['user', 'admin']),
-  upload.single('image'),
+  upload.array('image', 10),
   createPost
 );
-router.put('/post/:id', update);
-router.delete('/post/:id', remove);
+router.put(
+  '/post/:id',
+  authenticate,
+  authorize(['user', 'admin']),
+  upload.array('image', 10),
+  updatePost
+);
+router.delete(
+  '/post/:id',
+  authenticate,
+  authorize(['user', 'admin']),
+  upload.array('image', 10),
+  deletePost
+);
 
 module.exports = router;
