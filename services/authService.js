@@ -19,6 +19,10 @@ exports.registerUser = async (username, email, password) => {
   const userInteraction = new UserPostInteraction({ userId: newUser, myPost: [], bookmarkPost: [] });
   await userInteraction.save()
 
+  newUser.follows = follow._id;
+  newUser.posts = userInteraction._id;
+  await newUser.save();
+
   return newUser;
 };
 

@@ -24,29 +24,23 @@ const userSchema = new mongoose.Schema(
       enum: ['user', 'admin'],
       default: 'user',
     },
-    following: [
+    follows: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
+        ref: 'Follow'
+      }
     ],
-    follower: [
+    posts: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
+        ref: 'UserPostInteraction'
+      }
     ],
     profile: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image',
         default: null,
-      },
-    ],
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Like',
       },
     ],
   },
@@ -58,11 +52,5 @@ userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
-
-// userSchema.virtual('profilePicPath').get(function() {
-//   if (this.profilePic != null && this.profilePicType != null) {
-//     return `data:${this.profilePicType};base64,${this.profilePic.toString('base64')}`;
-//   }
-// });
 
 module.exports = mongoose.model('User', userSchema);

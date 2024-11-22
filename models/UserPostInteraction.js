@@ -16,4 +16,4 @@ const userPostInteractionSchema = new mongoose.Schema({
     }]
 });
 
-module.exports = mongoose.model('userPostInteraction', userPostInteractionSchema);
+module.exports = mongoose.model('UserPostInteraction', userPostInteractionSchema);
